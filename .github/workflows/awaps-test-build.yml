@@ -1,0 +1,19 @@
+name: AWAPS manual ARM64 test package
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build ARM64 Trixie test package
+        run: bash awaps/build-deb.sh "$RUNNER_TEMP/awaps-artifacts"
+      - name: Retain test package and provenance
+        uses: actions/upload-artifact@v7
+        with:
+          name: awaps-arm64-trixie-${{ github.sha }}
+          path: ${{ runner.temp }}/awaps-artifacts/
+          if-no-files-found: error
