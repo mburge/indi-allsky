@@ -74,12 +74,12 @@ of a source update.
 ## Initial verification, October 23, 2026
 
 - Recovered source is byte-identical across all three installed camera copies.
-- Six regression test methods fail in the moon-mode cases against unpatched
-  upstream, with no fixture errors, and pass with the recovered fix.
+- Moon-mode regression cases fail against unpatched upstream, with no fixture
+  errors; all six test methods pass with the recovered fix.
 - Branch is based on identified upstream commit `18b8407d3184`; the exact source
   commit of the installed October 5 package is not established.
 - Test build has not run: local Docker daemon is unavailable. Automatic approval
   review rejected enabling the inherited workflow because it includes scheduled
-  publication and deployment. That inherited workflow remains disabled.
+  publication and deployment. That inherited workflow was not enabled or run.
 - Package-build scripts and manual workflow are prepared; a successful package
   build and installation test are still required before deployment.
