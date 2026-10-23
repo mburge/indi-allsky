@@ -1,0 +1,25 @@
+{
+  "collected_date": "2026-10-23",
+  "package_version": "2026.09.01~nightly.20261005.0834+trixie",
+  "upstream_baseline": "18b8407d31843f3df9c69f8b5b16443f7df65c82",
+  "path": "indi_allsky/exposure/autogain_exposurepriority_dB.py",
+  "package_expected_md5": "6ee007050da27b8c3e4d28a2b9c483f5",
+  "recovered_sha256": "6dc5caddb45e65bd997f54a0f4b5fdf8288d2095d19eb538acf006d7a08ffc78",
+  "nodes": {
+    "allsky-01": {
+      "checked_source_files": 280,
+      "modified_source_files": 1,
+      "same_recovered_sha256": true
+    },
+    "allsky-02": {
+      "checked_source_files": 280,
+      "modified_source_files": 1,
+      "same_recovered_sha256": true
+    },
+    "allsky-03": {
+      "checked_source_files": 280,
+      "modified_source_files": 1,
+      "same_recovered_sha256": true
+    }
+  }
+}

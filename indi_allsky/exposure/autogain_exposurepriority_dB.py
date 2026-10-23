@@ -26,10 +26,16 @@ class IndiAllSky_Exposure_AutoGain_ExposurePriority_dB_Base(IndiAllSky_Exposure_
 
     @property
     def gain_min(self):
+        if self.night_av[constants.NIGHT_NIGHT] and self.night_av[constants.NIGHT_MOONMODE]:
+            return self._expUtils.GAIN_MIN_MOONMODE
+
         return self._expUtils.GAIN_MIN_NIGHT
 
     @property
     def gain_max(self):
+        if self.night_av[constants.NIGHT_NIGHT] and self.night_av[constants.NIGHT_MOONMODE]:
+            return self._expUtils.GAIN_MAX_MOONMODE
+
         return self._expUtils.GAIN_MAX_NIGHT
 
 
