@@ -1,8 +1,10 @@
-# Fixed-clock exposure scheduling — proposal only
+# Fixed-clock exposure scheduling — original design notes
 
-Status: no scheduling code has been changed or deployed. The user approved a
-common clock grid and skipping missed slots. Values/edge cases below remain
-reviewable proposals.
+Historical proposal: the limited nighttime INDI path is now implemented on the
+`awaps` branch. See [current deployment procedure](clock-grid-deployment.md)
+for the approved 100 ms deadline, package scope, unsupported capture modes, and
+rollback. The design and broader verification ideas below remain reference
+material; they are not a record that every item has been implemented.
 
 ## Concrete target
 
@@ -73,5 +75,6 @@ period must still pass exposure duration and disk budgeting checks.
   processing backlog, clock health, and end-of-night behavior. Two successful
   startup cycles are insufficient acceptance criteria.
 
-The next implementation decision is the lateness allowance and scope of the
-first trial. No camera-side changes are authorized by this proposal alone.
+The user subsequently approved a narrow October 5 package overlay, a 100 ms
+maximum command lateness, and a first deployment on allsky-02/allsky-03. Refer
+to the deployment procedure and measured deployment report for actual status.

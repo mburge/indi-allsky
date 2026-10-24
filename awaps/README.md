@@ -9,7 +9,8 @@ a separate action against a tested package; this branch is not installed on any
 camera merely because it was pushed.
 
 See [patch inventory](patches.md), [recovered provenance](recovered-source.json),
-and [fixed-clock scheduling proposal](scheduler-proposal.md).
+[fixed-clock design notes](scheduler-proposal.md), and the
+[current clock-grid overlay procedure](clock-grid-deployment.md).
 
 ## Test the recovered fix
 
@@ -81,5 +82,11 @@ of a source update.
 - Test build has not run: local Docker daemon is unavailable. Automatic approval
   review rejected enabling the inherited workflow because it includes scheduled
   publication and deployment. That inherited workflow was not enabled or run.
-- Package-build scripts and manual workflow are prepared; a successful package
-  build and installation test are still required before deployment.
+- The full application bundle build remains unrun. A separate, exact-version
+  pure-Python timing overlay was built natively and installed on allsky-02 on
+  October 23. Its source is `e3369e26508c`, package version
+  `0.1.1+gite3369e26508c`; all 24 tests passed in that camera's existing venv.
+  allsky-03 became unreachable before installation and is pending. The first
+  live trial revealed alternate-slot skipping due to outer-loop preparation;
+  the recorded source version includes that correction. Full-night and
+  two-camera verification remain necessary.
