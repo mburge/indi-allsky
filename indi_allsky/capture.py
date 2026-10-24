@@ -776,6 +776,11 @@ class CaptureWorker(Process):
                                 )
 
 
+                        grid_target = getattr(self.indiclient, '_awaps_last_grid_target', None)
+                        if grid_target is not None:
+                            # Driver gating may have waited for a future slot.
+                            # Use the actual command timestamp for elapsed time.
+                            frame_start_time = self.indiclient.exposureStartTime
                         camera_ready = False
                         waiting_for_frame = True
 
@@ -813,6 +818,10 @@ class CaptureWorker(Process):
                         elif waiting_for_sqm_frame:
                             # take next exposure as quickly as possible
                             next_frame_time = frame_start_time
+                        elif self.night and grid_target is not None:
+                            # Preserve queue backoff while keeping subsequent
+                            # exposure commands anchored to the absolute grid.
+                            next_frame_time = grid_target + self.config['EXPOSURE_PERIOD'] + self.add_period_delay
                         elif self.night:
                             next_frame_time = frame_start_time + self.config['EXPOSURE_PERIOD'] + self.add_period_delay
                         else:

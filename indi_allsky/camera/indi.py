@@ -24,6 +24,8 @@ from ..flask import create_app
 
 #from .. import constants
 from ..utils import IndiAllSkyExposureUtils
+from .. import constants
+from ..clock_grid import load_clock_grid
 
 from ..exceptions import TimeOutException
 from ..exceptions import CameraException
@@ -117,6 +119,8 @@ class IndiClient(PyIndi.BaseClient):
         self._expUtils = IndiAllSkyExposureUtils(self.config, self.exposure_av, self.gain_av, self.binning_av)
 
         self.night_av = night_av
+        self._awaps_clock_grid = load_clock_grid()
+        self._awaps_last_grid_target = None
 
         self._camera_id = None
 
@@ -1078,6 +1082,7 @@ class IndiClient(PyIndi.BaseClient):
         if not timeout:
             timeout = self.timeout
 
+        self._awaps_last_grid_target = None
         self.exposure = exposure
         self.sqm_exposure = sqm_exposure
 
@@ -1712,7 +1717,27 @@ class IndiClient(PyIndi.BaseClient):
             logger.info('Setting %s = %s', c[index].getLabel(), str(values[control_name]))
             c[index].setValue(values[control_name])
 
-        self.sendNewNumber(c)
+        grid = getattr(self, '_awaps_clock_grid', None) if name == 'CCD_EXPOSURE' else None
+        if grid is not None and self.night_av[constants.NIGHT_NIGHT]:
+            if self.config.get('FOCUS_MODE') or self.config.get('CAMERA_SQM', {}).get('ENABLE'):
+                raise ValueError('Disable clock-grid mode before focus/SQM capture')
+            while True:
+                target = grid.wait(self.config['EXPOSURE_PERIOD'])
+                # INDI callbacks can update this vector while we wait.
+                for control_name, index in self.__map_indexes(c, values.keys()).items():
+                    c[index].setValue(values[control_name])
+                issued = time.time()
+                if issued - target <= grid.max_lateness:
+                    break
+                logger.warning('AWAPS_GRID missed final command deadline target=%.6f', target)
+            self.exposureStartTime = issued
+            self._awaps_last_grid_target = target
+            self.sendNewNumber(c)
+            logger.info('AWAPS_GRID target=%.6f issued=%.6f late_ms=%.3f period=%.3f skipped=%d',
+                        target, issued, (issued-target)*1000,
+                        grid.period, grid.skipped)
+        else:
+            self.sendNewNumber(c)
 
         if sync:
             self.__wait_for_ctl_statuses(c, timeout=timeout)
