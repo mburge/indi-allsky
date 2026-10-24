@@ -62,8 +62,8 @@ Rollback: gracefully stop capture; `sudo dpkg --remove indi-allsky-awaps-grid`
 restores original source through dpkg-divert. Verify original SHA256s, remove
 only the deployment's runtime restart override, and start capture. Remove the
 residual `/etc/indi-allsky/awaps-clock-grid.json` conffile only when no longer
-needed (unpatched source does not read it). Resume the controller's legacy
-correction timer only after grid mode is removed from all participating nodes.
+needed (unpatched source does not read it). Remove the controller's active marker/condition guard only after grid mode is
+removed from all participating nodes; the timer itself remains enabled.
 
 No success/deployment result is claimed by this runbook. Record actual package
 version, start time, per-camera checks, gaps, and verification measurements in
