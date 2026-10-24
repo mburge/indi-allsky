@@ -819,9 +819,14 @@ class CaptureWorker(Process):
                             # take next exposure as quickly as possible
                             next_frame_time = frame_start_time
                         elif self.night and grid_target is not None:
-                            # Preserve queue backoff while keeping subsequent
-                            # exposure commands anchored to the absolute grid.
-                            next_frame_time = grid_target + self.config['EXPOSURE_PERIOD'] + self.add_period_delay
+                            # Prepare as soon as the camera is ready, then let
+                            # the driver wait for the next slot. Waiting until
+                            # the slot here leaves control lookup too late.
+                            next_frame_time = grid_target
+                            if self.add_period_delay > 0:
+                                # Keep upstream processing backoff: a delayed
+                                # cycle skips slots rather than catching up.
+                                next_frame_time += self.config['EXPOSURE_PERIOD'] + self.add_period_delay
                         elif self.night:
                             next_frame_time = frame_start_time + self.config['EXPOSURE_PERIOD'] + self.add_period_delay
                         else:

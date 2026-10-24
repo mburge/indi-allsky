@@ -12,8 +12,10 @@ At night, the ordinary `indi` client gates the actual CCD_EXPOSURE number-vector
 send after gain/binning and control lookup. It waits for epoch slots
 `10 + k * EXPOSURE_PERIOD`, revalidates/reapplies the vector before sending,
 records the actual command timestamp, and logs `AWAPS_GRID` target/issued time,
-lateness, period, and skipped slots. The capture loop schedules from the fixed
-target rather than the previous actual start. Existing processing backoff is
+lateness, period, and skipped slots. The capture loop prepares the next command as soon as the previous frame
+is complete; the driver then waits for its fixed target. Waiting until the
+target in the outer loop was observed to skip alternate slots during the first
+live trial because ordinary control lookup then exceeded the 100 ms deadline. Existing processing backoff is
 preserved and results in skipped slots, not off-grid catch-up exposures.
 
 At 15 seconds: :10, :25, :40, :55. A missed command deadline waits for the next
@@ -47,9 +49,9 @@ The deployment procedure must:
    baseline source checksums matched, and adequate disk space.
 2. Save original source and a service-state record; inspect package metadata,
    checksums, and syntax. Install on one camera and verify diversion ownership.
-3. Temporarily stop `awaps-capture-sync.timer` on the controller so legacy
-   restart-based correction cannot fight clock-grid capture if node 01 returns.
-   Keep the ordinary health/status timer running. Record the timer's prior state.
+3. Install the committed AWAPS clock-grid condition drop-in and active marker
+   on the controller so legacy restart-based correction cannot fight grid
+   capture if node 01 returns. Keep ordinary health/status collection running.
 4. Stop capture gracefully using SIGINT plus a runtime `Restart=no` override;
    wait for the main process to exit before restarting. Never force-kill active
    image workers. Remove only the deployment's own runtime override before start.

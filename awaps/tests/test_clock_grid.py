@@ -76,6 +76,30 @@ class GridTests(unittest.TestCase):
             p.write_text('{"enabled":"false"}')
             with self.assertRaises(ValueError):load_clock_grid(p)
 
+class CaptureLoopTests(unittest.TestCase):
+    def prepare_time(self, target, delay=0):
+        source=ast.parse((ROOT/'indi_allsky/capture.py').read_text())
+        branch=next(n for n in ast.walk(source) if isinstance(n,ast.If)
+                    and ast.unparse(n.test)=='self.night and grid_target is not None')
+        scope={'self':types.SimpleNamespace(config={'EXPOSURE_PERIOD':15},add_period_delay=delay),
+               'grid_target':target}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=branch.body,type_ignores=[])),
+                     'actual-capture-grid-branch','exec'),scope)
+        return scope['next_frame_time']
+    def test_readout_polling_and_control_lookup_do_not_skip_normal_slots(self):
+        clock=Clock();grid=ClockGrid(clock=clock);target=grid.wait(15)
+        for cycle in range(100):
+            # Nine-second integration, readout, then ordinary 250 ms polling
+            # and control lookup must complete before the following deadline.
+            clock.sleep(11.25)
+            clock.sleep(max(0,self.prepare_time(target)-clock.time()))
+            clock.sleep(.2)
+            target=grid.wait(15)
+            self.assertEqual(target,25+15*cycle)
+        self.assertEqual(grid.skipped,0)
+    def test_processing_backoff_retains_upstream_minimum_delay(self):
+        self.assertEqual(self.prepare_time(10,4),29)
+
 # Compile the actual driver method, replacing only hardware bindings. This
 # checks where the gate runs relative to device setup and sendNewNumber.
 class DriverTests(unittest.TestCase):

@@ -10,7 +10,7 @@ else:
     if subprocess.run(['git','-C',str(repo),'diff','--quiet','HEAD','--']).returncode:
         raise SystemExit('Commit tracked source changes before building')
 output=pathlib.Path(sys.argv[1]).resolve();output.mkdir(parents=True,exist_ok=True)
-version='0.1.0+git'+commit[:12]
+version='0.1.1+git'+commit[:12]
 base_version='2026.09.01~nightly.20261005.0834+trixie'
 base={
  'indi_allsky/capture.py':'d024e7eda5964d04ffc9389e14c8fcda1f5100d08d38842a612e2f76c0d314a7',
