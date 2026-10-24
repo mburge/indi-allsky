@@ -1,8 +1,11 @@
 # Clock-grid deployment for October 23, 2026
 
-Authorized target: allsky-02 and allsky-03. Leave allsky-01 untouched while its
-SSH access is unavailable. The user approved a narrow `.deb` overlay against
-the installed October 5 application and a 100 ms maximum command lateness.
+Initial authorized targets were allsky-02 and allsky-03 while allsky-01 was
+unavailable. After connectivity recovered, the user explicitly confirmed
+including allsky-01. The version-checked timing overlay is now installed on all
+three. The user approved a narrow `.deb` overlay against the installed October 5
+application and a 100 ms maximum command lateness. See the README for the
+measured startup result; full-night persistence remains to be checked.
 
 ## Runtime design
 

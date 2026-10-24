@@ -86,7 +86,11 @@ of a source update.
   pure-Python timing overlay was built natively and installed on allsky-02 on
   October 23. Its source is `e3369e26508c`, package version
   `0.1.1+gite3369e26508c`; all 24 tests passed in that camera's existing venv.
-  allsky-03 became unreachable before installation and is pending. The first
-  live trial revealed alternate-slot skipping due to outer-loop preparation;
-  the recorded source version includes that correction. Full-night and
-  two-camera verification remain necessary.
+  The first live trial revealed alternate-slot skipping due to outer-loop
+  preparation; the recorded source version includes that correction.
+- After connectivity recovered and the user explicitly included allsky-01,
+  the identical overlay was installed on 01 and 03. All three saved ten shared
+  15-second FITS cycles without skipped slots or automatic restarts. The
+  maximum recorded pairwise DATE-OBS separation was 55 ms; maximum local
+  command lateness was 0.237 ms. These are startup measurements, not independent
+  sensor-trigger measurements or proof of full-night persistence.
